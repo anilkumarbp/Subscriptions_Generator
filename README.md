@@ -9,7 +9,7 @@ Subscription_Generator allows you to create subscription for all the extensions 
 
 To subscribe to all the extensions on an account follow the steps marked below :
 
-1. [Authorize](http://ringcentral.github.io/api-explorer/#!/Authentication/oauth_token_post)
+1. [Authorize using an Admin User](http://ringcentral.github.io/api-explorer/#!/Authentication/oauth_token_post)
 2. [Retreive all the extensions](http://ringcentral.github.io/api-explorer/#!/Account_and_Extension_Information/v1_0_account__accountId__extension_get)
 3. [Set Subscription Events/EventFilters](http://ringcentral.github.io/api-explorer/#!/Notifications/v1_0_subscription_post)
 4. [Register Subscription](http://ringcentral.github.io/api-explorer/#!/Notifications/v1_0_subscription_post)
