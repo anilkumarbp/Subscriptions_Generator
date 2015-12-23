@@ -14,8 +14,7 @@ To subscribe to all the extensions on an account follow the steps marked below :
 4. [Register Subscription](http://ringcentral.github.io/api-explorer/#!/Notifications/v1_0_subscription_post)
 
 
-Building
---------
+## Building
 
 Fork and clone the repository. Then, install dependencies with
 
@@ -24,9 +23,11 @@ npm install
 node index.js
 ```
 
-### Dependencies
+## Dependencies
 
+Current used RCSDK version for this demo is :
 [RCSDK-1.3.2](https://github.com/ringcentral/ringcentral-js/tree/1.3.2)
+* Make sure to change the SDK version in the package.json before you chose to use a different SDK Version.
 
 
 ## Links
