@@ -2,7 +2,7 @@
 Subscriptions_Generator
 =======================
 
-Subscription_Generator allows you to create subscription for all the extensions enabling you to listen to Presence events and message-store notifications when a call/messages comes into the extension. For more information, see the 
+Subscription_Generator allows you to create subscription for all the extensions enabling you to listen to Presence events and message-store notifications when a call/messages comes into **ANY** of the extension. For more information, see the 
 [Developer Guide](https://developer.ringcentral.com/api-docs/latest/index.html#!#Notifications.html).
 
 ## Getting Started
@@ -20,7 +20,12 @@ To subscribe to all the extensions on an account follow the steps marked below :
 Fork and clone the repository. Then, install dependencies with
 
 ```
+git clone https://github.com/anilkumarbp/Subscriptions_Generator.git
+```
+```
 npm install
+```
+```
 node index.js
 ```
 
