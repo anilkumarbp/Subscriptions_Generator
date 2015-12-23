@@ -59,7 +59,7 @@ RingCentral SDK is available under an MIT-style license. See [LICENSE.txt](LICEN
 RingCentral SDK &copy; 2015 by RingCentral
 
 
-Contributing
+Contributing.
 ------------
 
 Bug fixes welcome! If you're not familiar with the GitHub pull
