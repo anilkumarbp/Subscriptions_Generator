@@ -5,129 +5,85 @@
 
 
 // Require RCSDK
-var callrecording;
 var RCSDK = require('rcsdk');
+var fs = require('fs');
+var extensions = [];
 var rcsdk = new RCSDK({
-	server: 'https://platform.devtest.ringcentral.com',
-	appKey: '',
-	appSecret: ''
+	server: 'https://platform.devtest.ringcentral.com', // https://platform.ringcentral.com ( Production )
+	appKey: 'enter app Key',
+	appSecret: 'enter app Secret'
 });
+
+// constructor
+var RingCentral = module.exports = function RingCentral(options) {
+    options = options || {};
+
+    // Instance of RC Platform Singleton
+    this.platform = rcsdk.getPlatform();
+    this.log = rcsdk.getLog();
+
+    // RC Auth
+    this.auth = null;
+
+    return this;
+}
 
 //Platform Singleton
 var platform = rcsdk.getPlatform();
 
-// console.log("Login API");
-// console.log("------------");
-// Authorize
+
+// Authenticate
 platform.authorize({
-	username: '',
-	extension: '',
-	password: '',
+	username: 'username',            // Enter the usernmae
+	extension: 'extension',          // Enter the extension
+	password: 'password',            // Enter the password
 	remember: 'true'
 }).then(function(response){
-	console.log("Yay, I'm Authorized");
-	callLog();
-	// downloadRecordings();
-				console.log("inside downaloads");
-				// console.log("callrecording:"+this.callrecording);
-				console.log("Inside : call recording value :"+this.callrecording);
-				var json = JSON.parse(this.callrecording);
-                var len = json.records.length;
-                console.log("length:"+len);
-                for(i=0;i<len;i++) {
+	// platform.getAuthData
+	// console.log("Yay, I'm Authorized");
+    platform.auth = response.json;
+    console.log('Authentication success');
+    console.log(JSON.stringify(response.data, null, 2));
 
+  // ********** Retreive Extensions ********************
+    // retreive all the extensions for this account
+   platform.get('/account/~/extension/')
+            .then(function(response){
+              
+              var apiresponse = response.json;
+              for(var key in apiresponse.records) {
+                var extension_number = "";
 
-                      if(json.records[i].hasOwnProperty('recording')){
-                                    var uri = json.records[i].recording.contentUri;
-                                    // alert('The recording URI is:'+ uri);
-                                    console.log('The Value of URI is'+ uri);
-                                    var url = uri.replace (/^[a-z]{5}\:\/{2}[a-z]{1,}\.[a-z]{1,}\.[a-z]{1,}\.[a-z]{1,}\:[0-9]{1,4}\/{1}[a-z]{1,}\/{1}[a-z]{1,}.\.0(.*)/, '$1');
-                                    console.log('Replaced URI'+ url);
-                                    
-
-                                    platform.get(url).then(function(response){
-                                        // response.setHeader('Content-Type':'audio/x-wav');
-                                        alert('Success: ' + response.data);
-                                        var donwloadLink = document.getElementById("download_call_recordings");
-                                        donwloadLink.href = "data:audio/mpeg;base64,"+btoa(response.data);
-                                        // var donwloadLink = btoa()
-                                        console.log(response.data);
-                                        console.log(donwloadLink.href);
-                                        // console.log()
-                                        // alert('Response Header' + response.);
-                                    }).catch(function(e){
-                                        alert('Error' + e.message);
-                                    });
-
-                             
-                        }
+                if (apiresponse.records[key].hasOwnProperty('extensionNumber')) {
+                    extension_number = parseInt(apiresponse.records[key].id);
+                    extensions.push(['/account/~/extension/' + extension_number + '/presence']);
                 }
+            }
+            
+            // Create a subscription
+                var subscription = rcsdk.getSubscription();
+             
+                subscription.setEvents(extensions);
 
-}).catch(function(e){
-	console.log(e.message || 'Server cannot authorize the user');
-})
+                subscription.on(subscription.events.notification, function(msg) {
+                console.log(JSON.stringify(msg));
+                });
+             
+                return subscription.register();
 
-// console.log("Call-log API");
-// console.log("------------");
-// Retreive call logs
-function callLog() {
-	rcsdk
-         .getContext()
-         .getPromise()
-         .all([
-                platform.get('/account/~/extension/~/call-log').then(function(response) {
-       			console.log('Success: ' + response.data.uri.toString());
-       			var txt=JSON.stringify(response.data, null, 2);
- 				// alert('txt json')
-                this.callrecording = txt;
-                // console.log(this.callrecording);		
-                // alert('The JSON array is' + callrecording.toString());
-                console.log('The Value of callrecording string is'+this.callrecording);
-                // downloadRecordings();
-                // document.getElementById("call-logs-text").innerHTML=txt;
-                }).catch(function(e) {
-                           console.log("error:"+e.message);
-                })
-             ]);
-}
+          })
+          .then(function(response) {
+                console.log('Subscription success');
+                console.log(JSON.stringify(response.data, null, 2));;
+          })
+          .catch(function(e){
+            console.error('Error ' + e.stack);
+          });
 
-// function downloadRecordings() {
-// 	// rcsdk
-//  //         .getContext()
-//  //         .getPromise()
-//  //         .all([
-// 				var json = JSON.parse(callrecording);
-//                 var len = json.records.length;
+   })
+   .catch(function(e){
+    console.error('Error ' + e.stack);
+  });
+   
 
-//                 for(i=0;i<len;i++) {
-
-
-//                       if(json.records[i].hasOwnProperty('recording')){
-//                                     var uri = json.records[i].recording.contentUri;
-//                                     // alert('The recording URI is:'+ uri);
-//                                     console.log('The Value of URI is'+ uri);
-//                                     var url = uri.replace (/^[a-z]{5}\:\/{2}[a-z]{1,}\.[a-z]{1,}\.[a-z]{1,}\.[a-z]{1,}\:[0-9]{1,4}\/{1}[a-z]{1,}\/{1}[a-z]{1,}.\.0(.*)/, '$1');
-//                                     console.log('Replaced URI'+ url);
-                                    
-
-//                                     platform.get(url).then(function(response){
-//                                         // response.setHeader('Content-Type':'audio/x-wav');
-//                                         alert('Success: ' + response.data);
-//                                         var donwloadLink = document.getElementById("download_call_recordings");
-//                                         donwloadLink.href = "data:audio/mpeg;base64,"+btoa(response.data);
-//                                         // var donwloadLink = btoa()
-//                                         console.log(response.data);
-//                                         console.log(donwloadLink.href);
-//                                         // console.log()
-//                                         // alert('Response Header' + response.);
-//                                     }).catch(function(e){
-//                                         alert('Error' + e.message);
-//                                     });
-
-                             
-//                         }
-//                 }
-//              // ]);
-// }
-
-})();
+  }) ();       
