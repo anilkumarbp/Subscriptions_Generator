@@ -39,8 +39,7 @@ platform.authorize({
 	password: 'password',            // Enter the password
 	remember: 'true'
 }).then(function(response){
-	// platform.getAuthData
-	// console.log("Yay, I'm Authorized");
+  
     platform.auth = response.json;
     console.log('Authentication success');
     console.log(JSON.stringify(response.data, null, 2));
