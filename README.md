@@ -7,11 +7,12 @@ Subscription_Generator allows you to create subscription for all the extensions 
 
 ## Getting Started
 
-The full installation instructions are included as an HTML file in the demo itself. You can view the [full installation instructions on the live demo](http://grokify.github.io/cti-demo/instructions.html).
+To subscribe to all the extensions on an account follow the steps marked below :
+1. [Authorize](http://ringcentral.github.io/api-explorer/#!/Authentication/oauth_token_post)
+2. [Retreive all the extensions on the Account](http://ringcentral.github.io/api-explorer/#!/Account_and_Extension_Information/v1_0_account__accountId__extension_get)
+3. [Set Subscription Events/EventFilters](http://ringcentral.github.io/api-explorer/#!/Notifications/v1_0_subscription_post)
+4. [Register Subscription](http://ringcentral.github.io/api-explorer/#!/Notifications/v1_0_subscription_post)
 
-Since this runs live on GitHub Pages, you can run this demo without any server-side installation, though it may be worthwhile to install the RingCentral for Desktop softphone as described in the instructions.
-
-You can also run this demo on any webserver by adding the `public` directory to the server's html directory. This may be useful if you wish to edit the pages. There is no need to run a database as the demo stores all necessary data using HTML5 Local Storage (e.g. `window.localStorage`). Instructions are provided below for Node.js http-server as one easy approach for this.
 
 Building
 --------
@@ -25,7 +26,7 @@ node index.js
 
 ### Dependencies
 
-Aside for the RingCentral for Desktop softphone, all dependencies are either built-in to the demo repo or accessed online via CDNs. There is no need to separately install depdencies such as JavaScript and CSS files.
+[RCSDK-1.3.2](https://github.com/ringcentral/ringcentral-js/tree/1.3.2)
 
 
 ## Links
@@ -57,11 +58,3 @@ Please report these on [GitHub](https://github.com/anilkumarbp/Subscriptions_Gen
 RingCentral SDK is available under an MIT-style license. See [LICENSE.txt](LICENSE.txt) for details.
 
 RingCentral SDK &copy; 2015 by RingCentral
-
-
-Contributing.
-------------
-
-Bug fixes welcome! If you're not familiar with the GitHub pull
-request/contribution process, [this is a nice tutorial]
-(https://gun.io/blog/how-to-github-fork-branch-and-pull-request/).
