@@ -20,6 +20,6 @@
   },
   "homepage": "https://developer.ringcentral.com/api-docs/latest/index.html#!#Notifications.html",
   "dependencies": {
-    "rcsdk": "1.3.2"
+    "rcsdk": "^1.3.2"
   }
 }

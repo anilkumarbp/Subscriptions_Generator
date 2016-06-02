@@ -5,84 +5,71 @@
 
 
 // Require RCSDK
-var RCSDK = require('rcsdk');
-var fs = require('fs');
-var extensions = [];
-var rcsdk = new RCSDK({
-	server: 'https://platform.devtest.ringcentral.com', // https://platform.ringcentral.com ( Production )
-	appKey: 'enter app Key',
-	appSecret: 'enter app Secret'
-});
+    var RCSDK = require('ringcentral');
+    var fs = require('fs');
+    var extensions = [];
+    var rcsdk = new RCSDK({
+        server: 'https://platform.devtest.ringcentral.com', // https://platform.ringcentral.com ( Production )
+        appKey: 'enter app Key',
+        appSecret: 'enter app Secret'
+    });
 
-// constructor
-var RingCentral = module.exports = function RingCentral(options) {
-    options = options || {};
-
-    // Instance of RC Platform Singleton
-    this.platform = rcsdk.getPlatform();
-    this.log = rcsdk.getLog();
-
-    // RC Auth
-    this.auth = null;
-
-    return this;
-}
 
 //Platform Singleton
-var platform = rcsdk.getPlatform();
+    var platform = rcsdk.platform();
 
 
 // Authenticate
-platform.authorize({
-	username: 'username',            // Enter the usernmae
-	extension: 'extension',          // Enter the extension
-	password: 'password',            // Enter the password
-	remember: 'true'
-}).then(function(response){
-  
-    platform.auth = response.json;
-    console.log('Authentication success');
-    console.log(JSON.stringify(response.data, null, 2));
+    platform.login({
+        username: 'username',            // Enter the usernmae
+        extension: 'extension',          // Enter the extension
+        password: 'password',            // Enter the password
+        remember: 'true'
+    }).then(function(response) {
 
-  // ********** Retreive Extensions ********************
-    // retreive all the extensions for this account
-   platform.get('/account/~/extension/')
-            .then(function(response){
-              
-              var apiresponse = response.json;
-              for(var key in apiresponse.records) {
-                var extension_number = "";
+            //platform.auth = response._json;
+            console.log('**************** Authentication success ****************');
+            console.log(JSON.stringify(response.json(), null, 2));
 
-                if (apiresponse.records[key].hasOwnProperty('extensionNumber')) {
-                    extension_number = parseInt(apiresponse.records[key].id);
-                    extensions.push(['/account/~/extension/' + extension_number + '/presence']);
-                }
-            }
-            
-            // Create a subscription
-                var subscription = rcsdk.getSubscription();
-             
-                subscription.setEvents(extensions);
 
-                subscription.on(subscription.events.notification, function(msg) {
-                console.log(JSON.stringify(msg));
+////********** Retreive Extensions ********************
+            //retreive all the extensions for this account
+            platform.get('/account/~/extension/')
+                .then(function (response) {
+                    var apiresponse = response.json();
+
+                    console.log("**************** The extension list is : ****************", JSON.stringify(apiresponse, null, 2));
+
+                    for (var key in apiresponse.records) {
+                        var extension_number = "";
+
+                        if (apiresponse.records[key].hasOwnProperty('extensionNumber') && apiresponse.records[key].type == "User") {
+                            extension_number = parseInt(apiresponse.records[key].id);
+                            extensions.push(['/account/~/extension/' + extension_number + '/presence?detailedTelephonyState=true']);
+                            extensions.push(['/account/~/extension/' + extension_number + '/message-store']);
+                        }
+                    }
+
+                    // Create a subscription
+                    var subscription = rcsdk.createSubscription();
+
+                    // Add Event Listeners
+                    subscription.on(subscription.events.notification, function (msg) {
+                        console.log("**************** Boom ! A new subscription notification, The JSON is : ****************",JSON.stringify(msg, null, 2));
+                    });
+
+                    return subscription.setEventFilters(extensions).register();
+                })
+                .then(function(response) {
+                    console.log('Subscription success');
+                    console.log(JSON.stringify(response.json(), null, 2));
+                })
+                .catch(function (e) {
+                    console.error('Error ' + e.stack);
                 });
-             
-                return subscription.register();
-
-          })
-          .then(function(response) {
-                console.log('Subscription success');
-                console.log(JSON.stringify(response.data, null, 2));;
-          })
-          .catch(function(e){
+        })
+        .catch(function (e) {
             console.error('Error ' + e.stack);
-          });
+        });
 
-   })
-   .catch(function(e){
-    console.error('Error ' + e.stack);
-  });
-   
-
-  }) ();       
+})();
