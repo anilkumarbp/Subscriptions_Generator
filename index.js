@@ -11,7 +11,6 @@ var PORT = process.env.PORT;
 
 // Dependencies
 var RC = require('ringcentral');
-var helpers = require('ringcentral-helpers');
 var http = require('http');
 
 
